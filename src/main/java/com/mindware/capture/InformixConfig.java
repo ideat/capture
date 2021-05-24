@@ -38,7 +38,7 @@ public class InformixConfig {
     }
 
 
-    @Primary
+//    @Primary
     @Bean(name = "informixEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -59,7 +59,7 @@ public class InformixConfig {
 
     }
 
-    @Primary
+//    @Primary
     @Bean(name = "informixTransactionManager")
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();

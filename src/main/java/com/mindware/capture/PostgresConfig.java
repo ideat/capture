@@ -19,7 +19,8 @@ import java.util.Map;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "postgresEntityManagerFactory", transactionManagerRef = "postgresTransactionManager",
+@EnableJpaRepositories(entityManagerFactoryRef = "postgresEntityManagerFactory",
+        transactionManagerRef = "postgresTransactionManager",
         basePackages = { "com.mindware.capture.repository.postgres"})
 public class PostgresConfig {
 
@@ -29,10 +30,10 @@ public class PostgresConfig {
     @Bean(name = "postgresDataSource")
     public DataSource adminDatasource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl(env.getProperty("postgre.datasource.url"));
-        dataSource.setUsername(env.getProperty("postgre.datasource.username"));
-        dataSource.setPassword(env.getProperty("postgre.datasource.password"));
-        dataSource.setDriverClassName(env.getProperty("postgre.datasource.driver-class-name"));
+        dataSource.setUrl(env.getProperty("postgres.datasource.url"));
+        dataSource.setUsername(env.getProperty("postgres.datasource.username"));
+        dataSource.setPassword(env.getProperty("postgres.datasource.password"));
+        dataSource.setDriverClassName(env.getProperty("postgres.datasource.driver-class-name"));
 
         return dataSource;
     }
@@ -49,9 +50,9 @@ public class PostgresConfig {
         em.setJpaVendorAdapter(vendorAdapter);
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.hbm2ddl.auto", env.getProperty("postgre.jpa.hibernate.ddl-auto"));
-        properties.put("hibernate.show-sql", env.getProperty("postgre.jpa.show-sql"));
-        properties.put("hibernate.dialect", env.getProperty("postgre.jpa.database-platform"));
+        properties.put("hibernate.hbm2ddl.auto", env.getProperty("postgres.jpa.hibernate.ddl-auto"));
+        properties.put("hibernate.show-sql", env.getProperty("postgres.jpa.show-sql"));
+        properties.put("hibernate.dialect", env.getProperty("postgres.jpa.database-platform"));
 
         em.setJpaPropertyMap(properties);
 

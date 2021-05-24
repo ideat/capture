@@ -1,6 +1,9 @@
 package com.mindware.capture.model.postgres;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,17 +13,20 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "parameter")
+@Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "parameter")
 public class Parameter {
     @Id
     private UUID id;
 
     private String codigo;
 
-    private String description;
+    private String descripcion;
 
-    private String orden;
+    private Integer orden;
 
     private String categoria;
 

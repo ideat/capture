@@ -14,7 +14,7 @@ public class GbciiService {
     GbciiRepository repository;
 
     public String getCiiudesc(Integer ciiu){
-        Optional<Gbcii> gbcii = repository.findById(ciiu);
+        Optional<Gbcii> gbcii = repository.findByCiiu(ciiu);
         return gbcii.isPresent()?gbcii.get().getGbciidesc():"";
     }
 }

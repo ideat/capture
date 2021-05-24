@@ -17,8 +17,8 @@ import javax.persistence.Table;
 public class Gbcii {
 
     @Id
-    @Column(name = "gbciiciuu")
-    private Integer gbciiciuu;
+    @Column(name = "gbciiciiu")
+    private Integer gbciiciiu;
 
     @Column(name = "gbciidesc")
     private String gbciidesc;

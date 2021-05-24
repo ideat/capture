@@ -3,8 +3,7 @@ package com.mindware.capture.service;
 import com.mindware.capture.dto.IPersona;
 import com.mindware.capture.dto.Operaciones;
 import com.mindware.capture.dto.Persona;
-import com.mindware.capture.dto.Persona1;
-import com.mindware.capture.dto.informix.GbagePrdeu;
+import com.mindware.capture.dto.informix.IGbagePrdeu;
 import com.mindware.capture.model.informix.*;
 import com.mindware.capture.model.postgres.Parameter;
 import com.mindware.capture.repository.informix.*;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class OperacionService {
@@ -232,17 +233,20 @@ public class OperacionService {
 
             String complemento="";
             String numeroCarnet = "";
-            if(literal.matches("^[a-zA-Z]*$")){
-                complemento = carnet.substring(carnet.length()-3,carnet.length()-2);
-                numeroCarnet = carnet.substring(0,carnet.length()-4);
-            }else{
-                numeroCarnet = carnet.substring(0,carnet.length()-2);
-            }
-
 
             parameter = utiles.getCodigoUIF("TIPO_PERSONA","TP", persona.getGbagetper().toString());
-
             per.setTipoPersona(parameter.getCodigo());
+            if(parameter.getCodigo().equals("J")){
+                numeroCarnet = persona.getGbagenruc()==null?persona.getGbagendid():persona.getGbagenruc();
+            }else {
+                if (literal.matches("^[a-zA-Z]*$")) {
+                    complemento = carnet.substring(carnet.length() - 4, carnet.length() - 2);
+                    numeroCarnet = carnet.substring(0, carnet.length() - 4);
+                } else {
+                    numeroCarnet = carnet.substring(0, carnet.length() - 2);
+                }
+            }
+
 
             parameter = utiles.getCodigoUIF("TIPO_DOCUMENTO","TID", persona.getGbagetdid().toString());
             per.setTipoDocumento(parameter.getCodigo());
@@ -313,8 +317,8 @@ public class OperacionService {
 
             String garantes = "";
             int i=1;
-            List<GbagePrdeu> gbagePrdeuList = prdeuRepository.findGbagePrdeuByPrdeunpre(prmpr.getPrmprnpre());
-            for(GbagePrdeu g: gbagePrdeuList){
+            List<IGbagePrdeu> gbagePrdeuList = prdeuRepository.findGbagePrdeuByPrdeunpre(prmpr.getPrmprnpre());
+            for(IGbagePrdeu g: gbagePrdeuList){
                 if (i == gbagePrdeuList.size())
                     garantes = g.getPrdeutres()==2?g.getGbagenomb() + " " + garantes:garantes;
                 else
@@ -406,8 +410,10 @@ public class OperacionService {
             operaciones.setNumeroRegistrosPrimeraPersona(primera.intValue());
             operaciones.setNumeroRegistrosSegundaPersona(gbagePrdeuList.size()- primera.intValue());
 
-            //TODO: proceso de cargar las personas
+            List<IPersona> listPersona = prmprRepository.findClientesByNumeroCredito(prmpr.getPrmprnpre().toString());
+            List<Persona> personaList = listaPersonasOperaciones(listPersona);
 
+            operaciones.setPersonas(personaList);
             operacionesList.add(operaciones);
 
         }
@@ -518,9 +524,16 @@ public class OperacionService {
             countSegundaPersona = (pfmdp.getPfmdpcag4()!=null) && (pfmdp.getPfmdpcag4()>0)?countSegundaPersona+1:countSegundaPersona;
             operaciones.setNumeroRegistrosSegundaPersona(countSegundaPersona);
 
+            List<Integer> gbagecageList = new ArrayList<>();
+            gbagecageList.add(pfmdp.getPfmdpcage());
+            if(pfmdp.getPfmdpcag2()!=null)  gbagecageList.add(pfmdp.getPfmdpcag2());
+            if(pfmdp.getPfmdpcag3()!=null)  gbagecageList.add(pfmdp.getPfmdpcag3());
+
+            List<IPersona> listPersona = pfmdpRepository.findClientesInDPF(gbagecageList);
+            List<Persona> personaList = listaPersonasOperaciones(listPersona);
+            operaciones.setPersonas(personaList);
 
             operacionesList.add(operaciones);
-
 
         }
 
@@ -570,7 +583,8 @@ public class OperacionService {
             operaciones.setFechaCancelacion(null);
             operaciones.setFuentePago(null);
             operaciones.setFechaDesembolso(null);
-            operaciones.setPlazoVigencia(lcmlc.getLcmlcplzo().toString());
+            Long plzo = DAYS.between(lcmlc.getLcmlcfini(),lcmlc.getLcmlcfven());
+            operaciones.setPlazoVigencia(plzo.toString()); //TODO: El plazo de la linea esta nulo
 
             operaciones.setMontoLimiteCompra(null);
             operaciones.setFechaConstitucion(null);
@@ -581,7 +595,7 @@ public class OperacionService {
             operaciones.setNombreAsociacion(null);
             operaciones.setNumeroContrato(null);
 
-            operaciones.setObjetoFideicomisoLineaCredito(lcmlc.getLcmlcdest().toString()); //TODO: Campo a considerar para la linea de credito, configuracion
+            operaciones.setObjetoFideicomisoLineaCredito(lcmlc.getLcmlcdest()!=null?lcmlc.getLcmlcdest().toString():""); //TODO: Campo a considerar para la linea de credito, configuracion
 
             operaciones.setFechaContrato(null);
             operaciones.setImporteBonosBs(null);
@@ -613,6 +627,9 @@ public class OperacionService {
             operaciones.setNumeroRegistrosPrimeraPersona(lcdlcList.size()); //TODO: en linea de credito exite segundas personas?
             operaciones.setNumeroRegistrosSegundaPersona(0);// TODO: si se tiene segundas personas se coloca el valor
 
+            List<IPersona> listPersona = lcmlRepository.findByNumeroLinea(lcmlc.getLcmlcnrlc());
+            List<Persona> personaList = listaPersonasOperaciones(listPersona);
+            operaciones.setPersonas(personaList);
 
             operacionesList.add(operaciones);
 

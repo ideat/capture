@@ -72,6 +72,14 @@ public class TransaccionesService {
         listaDocumentos = Arrays.asList(arrayCarnet);
         listaPersonas = getListaPersonas(listaDocumentos);
 
+        listaTransacciones.addAll(generarTransaccionesCajasAhorro());
+
+        listaTransacciones.addAll(generarTransaccionesCredito());
+
+        listaTransacciones.addAll(generarTransaccionesDpf());
+
+        listaTransacciones.addAll(generarTransaccionesLineaCredito());
+
 
         return listaTransacciones;
     }
@@ -97,11 +105,12 @@ public class TransaccionesService {
 
         for(Camca camca : listaCajasAhorro){
             List<Catrn> catrnList = catrnRepository.findByCatrnncta(camca.getCamcancta());
-            Optional<Gbage> gbage = gbageRepository.findById(camca.getCamcacage());
+            Optional<Gbage> gbage = gbageRepository.findByGbagecage(camca.getCamcacage());
 
-            Transacciones transacciones = new Transacciones();
+
 
             for(Catrn catrn: catrnList){
+                Transacciones transacciones = new Transacciones();
                 transacciones.setDocumentoPersonaSolicitud(gbage.get().getGbagendid());
                 transacciones.setNumeroOperacion(catrn.getCatrnncta());
                 transacciones.setTipoOperacion("CA");
@@ -152,11 +161,12 @@ public class TransaccionesService {
 
         for(Prmpr prmpr: listaPrestamos){
             List<Prtdt> prtdtList = prtdtRepository.findByPrtdtnpre(prmpr.getPrmprnpre());
-            Optional<Gbage> gbage = gbageRepository.findById(prmpr.getPrmprcage());
+            Optional<Gbage> gbage = gbageRepository.findByGbagecage(prmpr.getPrmprcage());
 
-            Transacciones transacciones = new Transacciones();
+
 
             for(Prtdt prtdt: prtdtList){
+                Transacciones transacciones = new Transacciones();
                 transacciones.setDocumentoPersonaSolicitud(gbage.get().getGbagendid());
                 transacciones.setNumeroOperacion(prtdt.getPrtdtnpre().toString());
                 transacciones.setTipoOperacion("PRE");
@@ -212,10 +222,11 @@ public class TransaccionesService {
         for(Pfmdp pfmdp: listaDpf){
             List<Pftdt> pftdtList = pftdtRepository.findByPftdtndep(pfmdp.getPfmdpndep());
 
-            Transacciones transacciones = new Transacciones();
-            Optional<Gbage> gbage = gbageRepository.findById(pfmdp.getPfmdpcage());
+
+            Optional<Gbage> gbage = gbageRepository.findByGbagecage(pfmdp.getPfmdpcage());
 
             for(Pftdt pftdt: pftdtList){
+                Transacciones transacciones = new Transacciones();
                 transacciones.setDocumentoPersonaSolicitud(gbage.get().getGbagendid());
                 transacciones.setNumeroOperacion(pftdt.getPftdtndep().toString());
                 transacciones.setTipoOperacion("DPF");
@@ -260,10 +271,11 @@ public class TransaccionesService {
         for(Lcmlc lcmlc: listaLineasCredito){
             List<Lctrn> lctrnList = lctrnRepository.findByLctrnnrlc(lcmlc.getLcmlcnrlc());
 
-            Transacciones transacciones = new Transacciones();
-            Optional<Gbage> gbage = gbageRepository.findById(lcmlc.getLcmlccage());
+
+            Optional<Gbage> gbage = gbageRepository.findByGbagecage(lcmlc.getLcmlccage());
 
             for(Lctrn lctrn:lctrnList){
+                Transacciones transacciones = new Transacciones();
                 transacciones.setDocumentoPersonaSolicitud(gbage.get().getGbagendid());
                 transacciones.setNumeroOperacion(lctrn.getLctrnoper().toString());
                 transacciones.setTipoOperacion("LDC");

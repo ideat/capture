@@ -21,4 +21,6 @@ public interface IPersona {
     Integer getGbageeciv(); // estadoCivil;//
 
     String getGbagendid(); // carnetCompleto;//
+
+    String getGbagenruc();
 }

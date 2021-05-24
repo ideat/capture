@@ -18,6 +18,6 @@ public class Lcdlc {
     @EmbeddedId
     private LcdlcId id;
 
-    private Integer lcdlcres;
+    private Integer lcdlccres;
 
 }

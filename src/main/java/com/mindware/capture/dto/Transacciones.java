@@ -45,9 +45,9 @@ public class Transacciones {
 
     private String numeroCheque;
 
-    private String fechaProgramada;
+    private LocalDate fechaProgramada;
 
-    private String importeProgramado;
+    private Double importeProgramado;
 
     private String nombreGiroCheque;
 

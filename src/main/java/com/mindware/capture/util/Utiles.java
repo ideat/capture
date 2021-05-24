@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,5 +56,12 @@ public class Utiles {
         }
 
         return new Parameter();
+    }
+
+    public String dateFormatted(LocalDate date, String format){
+        String[] d = date.toString().split("-");
+        LocalDate da = LocalDate.of(Integer.parseInt(d[0]),Integer.parseInt(d[1]),Integer.parseInt(d[2]));
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(format);
+        return dtf.format(da);
     }
 }

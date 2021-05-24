@@ -16,7 +16,7 @@ public interface CamcaRepository extends JpaRepository<Camca,Integer> {
     @Query(value = " select d.gbdaccage, g.gbagetper, g.gbagendid, " +
             " g.gbagenomb, d.gbdacnom1, " +
             "d.gbdacnom2, d.gbdacape1, d.gbdacape2, " +
-            "g.gbageeciv, g.gbagetdid " +
+            "g.gbageeciv, g.gbagetdid, g.gbagenruc " +
             "from Gbage g " +
             "inner join Gbdac d on (g.gbagecage = d.gbdaccage) " +
             "inner join Cafir c on (c.cafircage = d.gbdaccage) " +
